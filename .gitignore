@@ -4,3 +4,5 @@
 *.tfplan
 .env
 *.pem
+
+**/terraform.tfvars

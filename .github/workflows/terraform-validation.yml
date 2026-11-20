@@ -1,0 +1,36 @@
+name: Terraform CI Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-validation:
+    name: Terraform Format and Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: |
+          terraform -chdir=Project1 init -backend=false
+          terraform -chdir=project2 init -backend=false
+          terraform -chdir=project4 init -backend=false
+
+      - name: Terraform Validate
+        run: |
+          terraform -chdir=Project1 validate
+          terraform -chdir=project2 validate
+          terraform -chdir=project4 validate

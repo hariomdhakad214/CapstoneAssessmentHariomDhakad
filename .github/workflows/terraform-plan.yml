@@ -1,0 +1,41 @@
+name: Terraform Plan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+
+    # Dummy credentials: the plan only creates new resources and never calls real AWS.
+    env:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      TF_VAR_ci_mode: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform -chdir=project12 init -backend=false
+
+      - name: Terraform Plan
+        run: terraform -chdir=project12 plan -input=false -out=tfplan
+
+      - name: Save human-readable plan
+        run: terraform -chdir=project12 show -no-color tfplan > project12/tfplan.txt
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: |
+            project12/tfplan
+            project12/tfplan.txt

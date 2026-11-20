@@ -1,0 +1,1 @@
+[![Terraform CI Validation](https://github.com/hariomdhakad214/CapstoneAssessmentHariomDhakad/actions/workflows/terraform-validation.yml/badge.svg)](https://github.com/hariomdhakad214/CapstoneAssessmentHariomDhakad/actions/workflows/terraform-validation.yml)

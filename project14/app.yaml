@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-docker
+  labels:
+    app: hello-docker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-docker
+  template:
+    metadata:
+      labels:
+        app: hello-docker
+    spec:
+      containers:
+        - name: hello-docker
+          image: 590507089733.dkr.ecr.ap-south-1.amazonaws.com/hariom-project13-app:1.0
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-docker
+spec:
+  type: LoadBalancer
+  selector:
+    app: hello-docker
+  ports:
+    - port: 80
+      targetPort: 5000

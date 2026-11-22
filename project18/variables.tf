@@ -1,7 +1,7 @@
 variable "app_version" {
   description = "Version recorded in the release manifest"
   type        = string
-  default     = "1.0.0"
+  default     = "1.1.0"
 }
 
 variable "environment" {

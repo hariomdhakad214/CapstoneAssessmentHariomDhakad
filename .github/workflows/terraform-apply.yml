@@ -1,0 +1,79 @@
+name: Terraform GitOps
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "project18/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "project18/**"
+
+jobs:
+  plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform -chdir=project18 init -input=false
+
+      - name: Terraform Plan
+        run: terraform -chdir=project18 plan -input=false -out=tfplan
+
+      - name: Show plan in the run summary
+        run: |
+          echo '### Terraform plan' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          terraform -chdir=project18 show -no-color tfplan >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload plan
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: project18/tfplan
+
+  # Runs only after a PR is merged into main, and waits for approval on the production environment
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: project18
+
+      - name: Terraform Init
+        run: terraform -chdir=project18 init -input=false
+
+      - name: Terraform Apply
+        run: terraform -chdir=project18 apply -input=false tfplan
+
+      - name: Show release manifest
+        run: cat project18/release.txt

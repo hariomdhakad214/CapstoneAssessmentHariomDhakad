@@ -46,13 +46,30 @@ jobs:
           name: tfplan
           path: project18/tfplan
 
-  # Runs only after a PR is merged into main, and waits for approval on the production environment
-  apply:
-    name: Terraform Apply
+  # Runs only after a PR is merged into main. Opens an issue and waits for the approver to comment "approved".
+  approve:
+    name: Approve Apply
     needs: plan
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: production
+    timeout-minutes: 60
+    permissions:
+      issues: write
+
+    steps:
+      - name: Wait for manual approval
+        uses: trstringer/manual-approval@v1.13.1
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: hariomdhakad214
+          minimum-approvals: 1
+          issue-title: "Approve Terraform apply for commit ${{ github.sha }}"
+          issue-body: "Review the plan in the workflow run summary, then comment `approved` to run the apply or `denied` to cancel it."
+
+  apply:
+    name: Terraform Apply
+    needs: approve
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository

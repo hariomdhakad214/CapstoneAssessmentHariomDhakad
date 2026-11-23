@@ -1,0 +1,6 @@
+2026-11-20T08:00:01Z INFO web-01 GET /index.html 200 12ms
+2026-11-20T08:00:07Z INFO web-01 GET /api/items 200 48ms
+2026-11-20T08:00:15Z WARN web-01 GET /api/items/99 404 6ms
+2026-11-20T08:01:02Z INFO web-01 POST /api/orders 201 91ms
+2026-11-20T08:01:44Z ERROR web-01 POST /api/orders 500 130ms database timeout
+2026-11-20T08:02:10Z INFO web-01 GET /health 200 2ms

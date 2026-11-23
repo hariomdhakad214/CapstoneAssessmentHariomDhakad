@@ -1,0 +1,6 @@
+2026-11-22T08:00:02Z INFO web-01 GET /index.html 200 13ms
+2026-11-22T08:00:25Z INFO web-01 GET /api/items 200 50ms
+2026-11-22T08:01:11Z ERROR web-01 GET /api/reports 500 210ms upstream unavailable
+2026-11-22T08:02:36Z INFO web-01 POST /api/orders 201 95ms
+2026-11-22T08:03:01Z INFO web-01 GET /health 200 2ms
+2026-11-22T08:04:20Z INFO web-01 GET /api/items 200 46ms
